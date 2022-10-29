@@ -3,7 +3,7 @@
 ### Change Data Capture
 
 #### Technologies used:
-- Kafka
-- Zookeeper
-- Debezium
-- MySql
+- Kafka - 3.2.0
+- Zookeeper - 3.6.3
+- Debezium - 1.9
+- MySql - 8.0.30-1.el8

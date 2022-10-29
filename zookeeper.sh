@@ -6,6 +6,31 @@
 # Exit immediately if a *pipeline* returns a non-zero status. (Add -x for command tracing)
 set -e
 
+echo "Run this command from project root dir"
+echo "Please enter zookeeper path (without / at end): "
+read zookeeper_path
+curl https://dlcdn.apache.org/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz -o $zookeeper_path/apache_zookeeper.tar.gz
+tar -xzf apache_zookeeper.tar.gz
+mv $zookeeper_path/apache-zookeeper-3.6.3-bin $zookeeper_path/apache_zookeeper
+export ZK_HOME="$zookeeper_path/apache_zookeeper" # take this as input from user
+if [[ -z "$LOG_LEVEL" ]]; then
+    LOG_LEVEL="INFO"
+fi
+sed -i -r -e "s|\\$\\{zookeeper.root.logger\\}|$LOG_LEVEL, CONSOLE|g" $ZK_HOME/conf/log4j.properties
+sed -i -r -e "s|\\$\\{zookeeper.console.threshold\\}|$LOG_LEVEL|g" $ZK_HOME/conf/log4j.properties
+# make data dir
+mkdir "$ZK_HOME/data"
+# make log dir
+mkdir "$ZK_HOME/txns"
+# check if zoo.cfg exist, if yes then copy otherwise don't copy
+cp samples/sample_zoo.cfg $ZK_HOME/conf/zoo.cfg
+sed -i -r -e "s|_DATA_DIR_|$ZK_HOME/data|g" $ZK_HOME/conf/zoo.cfg
+sed -i -r -e "s|_TXNS_|$ZK_HOME/txns|g" $ZK_HOME/conf/zoo.cfg
+# set above values in zoo.cfg
+export ZOOCFGDIR="$ZK_HOME/conf"
+export ZOOCFG="zoo.cfg"
+exec $ZK_HOME/bin/zkServer.sh start-foreground
+
 if [[ -z $1 ]]; then
     ARG1="start"
 else
@@ -26,6 +51,7 @@ fi
 case $ARG1 in
     start)
         # Copy config files if not provided in volume
+        export ZK_HOME="/home/chintu/Documents/cdc/apache-zookeeper-3.6.3-bin"
         cp -rn $ZK_HOME/conf.orig/* $ZK_HOME/conf
 
         #

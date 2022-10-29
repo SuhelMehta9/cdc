@@ -6,6 +6,13 @@
 # Exit immediately if a *pipeline* returns a non-zero status. (Add -x for command tracing)
 set -e
 
+# edit server.properties
+# edit connect-distributed.properties
+# edit meta.properties
+# set kafka home and config file
+CONFIG_FILE=config/server.properties
+exec $KAFKA_HOME/bin/kafka-server-start.sh $KAFKA_HOME/$CONFIG_FILE
+
 get_broker_endpoint() {
     if [[ -z "$KAFKA_BROKER" ]]; then
         # Look for any environment variables set by Docker container linking. For example, if the container
