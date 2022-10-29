@@ -7,12 +7,19 @@
 set -e
 
 # edit server.properties
+cp samples/server.properties $KAFKA_HOME/conf
 # edit connect-distributed.properties
+cp samples/connect-distributed.properties $KAFKA_HOME/conf
+mkdir -p $KAFKA_HOME/data/1
 # edit meta.properties
+cp samples/meta.properties $KAFKA_HOME/data
 # set kafka home and config file
+export $KAFKA_HOME
 CONFIG_FILE=config/server.properties
+export $CONFIG_FILE
 exec $KAFKA_HOME/bin/kafka-server-start.sh $KAFKA_HOME/$CONFIG_FILE
 
+<<com
 get_broker_endpoint() {
     if [[ -z "$KAFKA_BROKER" ]]; then
         # Look for any environment variables set by Docker container linking. For example, if the container

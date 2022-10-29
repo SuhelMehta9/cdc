@@ -31,6 +31,7 @@ export ZOOCFGDIR="$ZK_HOME/conf"
 export ZOOCFG="zoo.cfg"
 exec $ZK_HOME/bin/zkServer.sh start-foreground
 
+<<com
 if [[ -z $1 ]]; then
     ARG1="start"
 else
